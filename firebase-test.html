@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Test - Studymate</title>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-section h2 {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+        }
+        .status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .user-info {
+            background: #e2e3e5;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .database-test {
+            background: #fff3cd;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        input {
+            padding: 8px;
+            margin: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Firebase Integration Test</h1>
+    
+    <div class="test-section">
+        <h2>Firebase Initialization</h2>
+        <div id="initStatus" class="status info">Checking Firebase initialization...</div>
+        <button onclick="checkFirebaseInit()">Check Firebase Status</button>
+    </div>
+
+    <div class="test-section">
+        <h2>Authentication Tests</h2>
+        <div id="authStatus" class="status info">Authentication status will appear here</div>
+        <button onclick="testAnonymousAuth()">Anonymous Sign In</button>
+        <button onclick="testGoogleAuth()">Google Sign In</button>
+        <button onclick="signOut()">Sign Out</button>
+        <div id="userInfo" class="user-info" style="display: none;"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Firestore Database Tests</h2>
+        <div id="dbStatus" class="status info">Database status will appear here</div>
+        
+        <h3>User Management</h3>
+        <input type="text" id="testEmail" placeholder="Email" value="test@example.com">
+        <input type="text" id="testFirstName" placeholder="First Name" value="Test">
+        <input type="text" id="testLastName" placeholder="Last Name" value="User">
+        <button onclick="testCreateUser()">Create User</button>
+        <button onclick="testGetUser()">Get User</button>
+        <button onclick="testSearchUsers()">Search Users</button>
+        
+        <h3>Messages</h3>
+        <input type="text" id="testMessage" placeholder="Message content" value="Hello from Firebase!">
+        <button onclick="testSendMessage()">Send Message</button>
+        <button onclick="testGetMessages()">Get Messages</button>
+        
+        <div id="dbResults" class="database-test" style="display: none;"></div>
+    </div>
+
+    <script>
+        // Check Firebase initialization
+        function checkFirebaseInit() {
+            const statusDiv = document.getElementById('initStatus');
+            try {
+                if (typeof firebase !== 'undefined' && firebase.apps && firebase.apps.length > 0) {
+                    statusDiv.className = 'status success';
+                    statusDiv.textContent = '✅ Firebase initialized successfully!';
+                    
+                    // Check Firestore
+                    if (firebase.firestore) {
+                        statusDiv.textContent += ' Firestore is available.';
+                    } else {
+                        statusDiv.textContent += ' ⚠️ Firestore not available.';
+                    }
+                } else {
+                    statusDiv.className = 'status error';
+                    statusDiv.textContent = '❌ Firebase not initialized';
+                }
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ Firebase error: ' + error.message;
+            }
+        }
+
+        // Test anonymous authentication
+        async function testAnonymousAuth() {
+            const statusDiv = document.getElementById('authStatus');
+            try {
+                statusDiv.className = 'status info';
+                statusDiv.textContent = 'Signing in anonymously...';
+                
+                const result = await firebase.auth().signInAnonymously();
+                statusDiv.className = 'status success';
+                statusDiv.textContent = '✅ Anonymous sign in successful! UID: ' + result.user.uid;
+                updateUserInfo(result.user);
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ Anonymous sign in failed: ' + error.message;
+            }
+        }
+
+        // Test Google authentication
+        async function testGoogleAuth() {
+            const statusDiv = document.getElementById('authStatus');
+            try {
+                statusDiv.className = 'status info';
+                statusDiv.textContent = 'Signing in with Google...';
+                
+                const provider = new firebase.auth.GoogleAuthProvider();
+                const result = await firebase.auth().signInWithPopup(provider);
+                statusDiv.className = 'status success';
+                statusDiv.textContent = '✅ Google sign in successful!';
+                updateUserInfo(result.user);
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ Google sign in failed: ' + error.message;
+            }
+        }
+
+        // Sign out
+        async function signOut() {
+            const statusDiv = document.getElementById('authStatus');
+            try {
+                await firebase.auth().signOut();
+                statusDiv.className = 'status success';
+                statusDiv.textContent = '✅ Signed out successfully!';
+                document.getElementById('userInfo').style.display = 'none';
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ Sign out failed: ' + error.message;
+            }
+        }
+
+        // Update user info display
+        function updateUserInfo(user) {
+            const userInfoDiv = document.getElementById('userInfo');
+            userInfoDiv.style.display = 'block';
+            userInfoDiv.innerHTML = `
+                <strong>User Info:</strong><br>
+                UID: ${user.uid}<br>
+                Email: ${user.email || 'Anonymous'}<br>
+                Display Name: ${user.displayName || 'Anonymous'}<br>
+                Photo URL: ${user.photoURL || 'None'}
+            `;
+        }
+
+        // Test creating a user in Firestore
+        async function testCreateUser() {
+            const statusDiv = document.getElementById('dbStatus');
+            const email = document.getElementById('testEmail').value;
+            const firstName = document.getElementById('testFirstName').value;
+            const lastName = document.getElementById('testLastName').value;
+            
+            if (!window.firebaseDB) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ FirebaseDB not available';
+                return;
+            }
+            
+            try {
+                statusDiv.className = 'status info';
+                statusDiv.textContent = 'Creating user...';
+                
+                const userData = {
+                    email: email,
+                    firstName: firstName,
+                    lastName: lastName,
+                    avatar: 'https://via.placeholder.com/120',
+                    createdAt: new Date().toISOString()
+                };
+                
+                const result = await window.firebaseDB.createUser(userData);
+                
+                if (result.success) {
+                    statusDiv.className = 'status success';
+                    statusDiv.textContent = '✅ User created successfully!';
+                    showDbResults('User created:', userData);
+                } else {
+                    statusDiv.className = 'status error';
+                    statusDiv.textContent = '❌ Failed to create user: ' + result.error;
+                }
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ Error creating user: ' + error.message;
+            }
+        }
+
+        // Test getting a user from Firestore
+        async function testGetUser() {
+            const statusDiv = document.getElementById('dbStatus');
+            const email = document.getElementById('testEmail').value;
+            
+            if (!window.firebaseDB) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ FirebaseDB not available';
+                return;
+            }
+            
+            try {
+                statusDiv.className = 'status info';
+                statusDiv.textContent = 'Getting user...';
+                
+                const result = await window.firebaseDB.getUser(email);
+                
+                if (result.success) {
+                    statusDiv.className = 'status success';
+                    statusDiv.textContent = '✅ User retrieved successfully!';
+                    showDbResults('User data:', result.user);
+                } else {
+                    statusDiv.className = 'status error';
+                    statusDiv.textContent = '❌ Failed to get user: ' + result.error;
+                }
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ Error getting user: ' + error.message;
+            }
+        }
+
+        // Test searching users
+        async function testSearchUsers() {
+            const statusDiv = document.getElementById('dbStatus');
+            const query = document.getElementById('testFirstName').value;
+            
+            if (!window.firebaseDB) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ FirebaseDB not available';
+                return;
+            }
+            
+            try {
+                statusDiv.className = 'status info';
+                statusDiv.textContent = 'Searching users...';
+                
+                const result = await window.firebaseDB.searchUsers(query);
+                
+                if (result.success) {
+                    statusDiv.className = 'status success';
+                    statusDiv.textContent = `✅ Found ${result.users.length} users!`;
+                    showDbResults('Search results:', result.users);
+                } else {
+                    statusDiv.className = 'status error';
+                    statusDiv.textContent = '❌ Failed to search users: ' + result.error;
+                }
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ Error searching users: ' + error.message;
+            }
+        }
+
+        // Test sending a message
+        async function testSendMessage() {
+            const statusDiv = document.getElementById('dbStatus');
+            const content = document.getElementById('testMessage').value;
+            
+            if (!window.firebaseDB) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ FirebaseDB not available';
+                return;
+            }
+            
+            try {
+                statusDiv.className = 'status info';
+                statusDiv.textContent = 'Sending message...';
+                
+                const messageData = {
+                    chatId: 'test-chat-' + Date.now(),
+                    sender: 'test@example.com',
+                    senderName: 'Test User',
+                    content: content,
+                    type: 'text'
+                };
+                
+                const result = await window.firebaseDB.sendMessage(messageData);
+                
+                if (result.success) {
+                    statusDiv.className = 'status success';
+                    statusDiv.textContent = '✅ Message sent successfully!';
+                    showDbResults('Message sent:', messageData);
+                } else {
+                    statusDiv.className = 'status error';
+                    statusDiv.textContent = '❌ Failed to send message: ' + result.error;
+                }
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ Error sending message: ' + error.message;
+            }
+        }
+
+        // Test getting messages
+        async function testGetMessages() {
+            const statusDiv = document.getElementById('dbStatus');
+            
+            if (!window.firebaseDB) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ FirebaseDB not available';
+                return;
+            }
+            
+            try {
+                statusDiv.className = 'status info';
+                statusDiv.textContent = 'Getting messages...';
+                
+                const result = await window.firebaseDB.getMessages('test-chat', 10);
+                
+                if (result.success) {
+                    statusDiv.className = 'status success';
+                    statusDiv.textContent = `✅ Retrieved ${result.messages.length} messages!`;
+                    showDbResults('Messages:', result.messages);
+                } else {
+                    statusDiv.className = 'status error';
+                    statusDiv.textContent = '❌ Failed to get messages: ' + result.error;
+                }
+            } catch (error) {
+                statusDiv.className = 'status error';
+                statusDiv.textContent = '❌ Error getting messages: ' + error.message;
+            }
+        }
+
+        // Show database results
+        function showDbResults(title, data) {
+            const resultsDiv = document.getElementById('dbResults');
+            resultsDiv.style.display = 'block';
+            resultsDiv.innerHTML = `
+                <strong>${title}</strong><br>
+                <pre>${JSON.stringify(data, null, 2)}</pre>
+            `;
+        }
+
+        // Listen for auth state changes
+        firebase.auth().onAuthStateChanged((user) => {
+            const statusDiv = document.getElementById('authStatus');
+            if (user) {
+                statusDiv.className = 'status success';
+                statusDiv.textContent = '✅ User is signed in: ' + (user.email || user.uid);
+                updateUserInfo(user);
+            } else {
+                statusDiv.className = 'status info';
+                statusDiv.textContent = 'No user signed in';
+                document.getElementById('userInfo').style.display = 'none';
+            }
+        });
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkFirebaseInit();
+        });
+    </script>
+</body>
+</html>

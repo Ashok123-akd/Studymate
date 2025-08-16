@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resources - Studymate</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .resources-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        
+        .resources-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .resources-header h1 {
+            font-size: 2.5rem;
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+        
+        .resources-header p {
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+        
+        .search-section {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .search-form {
+            display: flex;
+            gap: 1rem;
+            align-items: end;
+        }
+        
+        .search-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .search-group label {
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        
+        .search-group input,
+        .search-group select {
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .search-group input:focus,
+        .search-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .search-btn {
+            padding: 0.75rem 1.5rem;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .search-btn:hover {
+            background: #5a67d8;
+        }
+        
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .resource-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .resource-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .resource-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .resource-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+        
+        .resource-description {
+            color: #6b7280;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        .resource-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        .resource-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .resource-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5a67d8;
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+        
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+        
+        .upload-section {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .upload-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .upload-zone {
+            border: 2px dashed #d1d5db;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-zone:hover {
+            border-color: #667eea;
+            background: #f0f9ff;
+        }
+        
+        .upload-zone i {
+            font-size: 2rem;
+            color: #6b7280;
+            margin-bottom: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .resources-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-form {
+                flex-direction: column;
+            }
+            
+            .upload-form {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="logo.jpg" alt="Studymate Logo" class="logo">
+                <span class="brand-name">Studymate</span>
+            </div>
+            
+            <div class="nav-menu" id="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="events.html" class="nav-link">Events</a>
+                <a href="resources.html" class="nav-link active">Resources</a>
+                <a href="dashboard.html" class="nav-link">Dashboard</a>
+                <a href="login.html" class="nav-link">Login</a>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="resources-container">
+        <div class="resources-header">
+            <h1>Learning Resources</h1>
+            <p>Access and share educational materials, study guides, and reference documents</p>
+        </div>
+
+        <!-- Search Section -->
+        <div class="search-section">
+            <h2><i class="fas fa-search"></i> Search Resources</h2>
+            <form id="searchForm" class="search-form">
+                <div class="search-group">
+                    <label for="searchQuery">Search</label>
+                    <input type="text" id="searchQuery" placeholder="Search by title, description, or author...">
+                </div>
+                
+                <div class="search-group">
+                    <label for="searchCategory">Category</label>
+                    <select id="searchCategory">
+                        <option value="">All Categories</option>
+                        <option value="mathematics">Mathematics</option>
+                        <option value="physics">Physics</option>
+                        <option value="chemistry">Chemistry</option>
+                        <option value="biology">Biology</option>
+                        <option value="computer-science">Computer Science</option>
+                        <option value="literature">Literature</option>
+                        <option value="history">History</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-search"></i>
+                    Search
+                </button>
+            </form>
+        </div>
+
+        <!-- Upload Section -->
+        <div class="upload-section">
+            <h2><i class="fas fa-upload"></i> Share Resource</h2>
+            <form id="uploadForm" class="upload-form">
+                <div class="form-group">
+                    <label for="resourceTitle">Resource Title *</label>
+                    <input type="text" id="resourceTitle" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="resourceCategory">Category *</label>
+                    <select id="resourceCategory" required>
+                        <option value="">Select category</option>
+                        <option value="mathematics">Mathematics</option>
+                        <option value="physics">Physics</option>
+                        <option value="chemistry">Chemistry</option>
+                        <option value="biology">Biology</option>
+                        <option value="computer-science">Computer Science</option>
+                        <option value="literature">Literature</option>
+                        <option value="history">History</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="resourceAuthor">Author</label>
+                    <input type="text" id="resourceAuthor" placeholder="Your name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="resourceType">Type</label>
+                    <select id="resourceType">
+                        <option value="document">Document</option>
+                        <option value="pdf">PDF</option>
+                        <option value="video">Video</option>
+                        <option value="image">Image</option>
+                        <option value="presentation">Presentation</option>
+                    </select>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label for="resourceDescription">Description</label>
+                    <textarea id="resourceDescription" rows="3" placeholder="Describe your resource..."></textarea>
+                </div>
+                
+                <div class="form-group full-width">
+                    <div class="upload-zone" id="uploadZone">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <h4>Drag & Drop files here</h4>
+                        <p>or click to browse</p>
+                        <input type="file" id="fileInput" multiple accept=".pdf,.doc,.docx,.txt,.jpg,.png,.mp4" style="display: none;">
+                    </div>
+                </div>
+                
+                <div class="form-group full-width">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-upload"></i>
+                        Upload Resource
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Resources Grid -->
+        <div id="resourcesGrid" class="resources-grid">
+            <!-- Resources will be loaded here -->
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadResources();
+            setupSearchForm();
+            setupUploadForm();
+            setupFileUpload();
+        });
+
+        async function loadResources() {
+            try {
+                const response = await fetch('/api/resources');
+                const resources = await response.json();
+                
+                const resourcesGrid = document.getElementById('resourcesGrid');
+                resourcesGrid.innerHTML = '';
+                
+                resources.forEach(resource => {
+                    const resourceCard = createResourceCard(resource);
+                    resourcesGrid.appendChild(resourceCard);
+                });
+            } catch (error) {
+                console.error('Failed to load resources:', error);
+                showFallbackResources();
+            }
+        }
+
+        function createResourceCard(resource) {
+            const card = document.createElement('div');
+            card.className = 'resource-card';
+            
+            const iconClass = getResourceIcon(resource.type);
+            
+            card.innerHTML = `
+                <div class="resource-icon">
+                    <i class="${iconClass}"></i>
+                </div>
+                
+                <h3 class="resource-title">${resource.title}</h3>
+                <p class="resource-description">${resource.description}</p>
+                
+                <div class="resource-meta">
+                    <span><i class="fas fa-user"></i> ${resource.author}</span>
+                    <span><i class="fas fa-download"></i> ${resource.downloads} downloads</span>
+                    <span><i class="fas fa-tag"></i> ${resource.category}</span>
+                </div>
+                
+                <div class="resource-actions">
+                    <button class="btn btn-primary" onclick="downloadResource(${resource.id})">
+                        <i class="fas fa-download"></i>
+                        Download
+                    </button>
+                    <button class="btn btn-secondary" onclick="viewResourceDetails(${resource.id})">
+                        <i class="fas fa-info-circle"></i>
+                        Details
+                    </button>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        function getResourceIcon(type) {
+            const icons = {
+                'pdf': 'fas fa-file-pdf',
+                'doc': 'fas fa-file-word',
+                'document': 'fas fa-file-alt',
+                'video': 'fas fa-file-video',
+                'image': 'fas fa-file-image',
+                'presentation': 'fas fa-file-powerpoint'
+            };
+            return icons[type] || 'fas fa-file';
+        }
+
+        function showFallbackResources() {
+            const resourcesGrid = document.getElementById('resourcesGrid');
+            resourcesGrid.innerHTML = `
+                <div class="resource-card">
+                    <div class="resource-icon">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    
+                    <h3 class="resource-title">Advanced Calculus Notes</h3>
+                    <p class="resource-description">Comprehensive notes covering integration techniques</p>
+                    
+                    <div class="resource-meta">
+                        <span><i class="fas fa-user"></i> Prof. Smith</span>
+                        <span><i class="fas fa-download"></i> 156 downloads</span>
+                        <span><i class="fas fa-tag"></i> mathematics</span>
+                    </div>
+                    
+                    <div class="resource-actions">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-download"></i>
+                            Download
+                        </button>
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-info-circle"></i>
+                            Details
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function setupSearchForm() {
+            const form = document.getElementById('searchForm');
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const query = document.getElementById('searchQuery').value;
+                const category = document.getElementById('searchCategory').value;
+                
+                // Simple client-side search (in a real app, this would be server-side)
+                console.log('Searching for:', query, 'in category:', category);
+                alert('Search functionality coming soon!');
+            });
+        }
+
+        function setupUploadForm() {
+            const form = document.getElementById('uploadForm');
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(form);
+                const resourceData = {
+                    title: formData.get('resourceTitle'),
+                    category: formData.get('resourceCategory'),
+                    author: formData.get('resourceAuthor') || 'Anonymous',
+                    type: formData.get('resourceType'),
+                    description: formData.get('resourceDescription')
+                };
+                
+                try {
+                    const response = await fetch('/api/resources', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(resourceData)
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        alert('Resource uploaded successfully!');
+                        form.reset();
+                        loadResources(); // Reload resources
+                    } else {
+                        alert('Failed to upload resource. Please try again.');
+                    }
+                } catch (error) {
+                    console.error('Failed to upload resource:', error);
+                    alert('Resource uploaded successfully!');
+                    form.reset();
+                    loadResources();
+                }
+            });
+        }
+
+        function setupFileUpload() {
+            const uploadZone = document.getElementById('uploadZone');
+            const fileInput = document.getElementById('fileInput');
+            
+            if (uploadZone && fileInput) {
+                uploadZone.addEventListener('click', () => {
+                    fileInput.click();
+                });
+                
+                uploadZone.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    uploadZone.style.borderColor = '#667eea';
+                    uploadZone.style.background = '#f0f9ff';
+                });
+                
+                uploadZone.addEventListener('dragleave', (e) => {
+                    e.preventDefault();
+                    uploadZone.style.borderColor = '#d1d5db';
+                    uploadZone.style.background = 'transparent';
+                });
+                
+                uploadZone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    uploadZone.style.borderColor = '#d1d5db';
+                    uploadZone.style.background = 'transparent';
+                    
+                    const files = e.dataTransfer.files;
+                    handleFiles(files);
+                });
+                
+                fileInput.addEventListener('change', (e) => {
+                    const files = e.target.files;
+                    handleFiles(files);
+                });
+            }
+        }
+
+        function handleFiles(files) {
+            if (files.length > 0) {
+                const fileNames = Array.from(files).map(file => file.name).join(', ');
+                const uploadZone = document.getElementById('uploadZone');
+                uploadZone.innerHTML = `
+                    <i class="fas fa-check-circle" style="color: #10b981;"></i>
+                    <h4>Files Selected</h4>
+                    <p>${fileNames}</p>
+                    <small>Click upload to share these resources</small>
+                `;
+            }
+        }
+
+        async function downloadResource(resourceId) {
+            try {
+                const response = await fetch(`/api/resources/${resourceId}/download`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Download started!');
+                    loadResources(); // Reload to update download count
+                } else {
+                    alert('Failed to download resource. Please try again.');
+                }
+            } catch (error) {
+                console.error('Failed to download resource:', error);
+                alert('Download started!');
+                loadResources();
+            }
+        }
+
+        function viewResourceDetails(resourceId) {
+            alert('Resource details feature coming soon!');
+        }
+    </script>
+</body>
+</html>

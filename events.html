@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events - Studymate</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .events-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        
+        .events-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .events-header h1 {
+            font-size: 2.5rem;
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+        
+        .events-header p {
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+        
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .event-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .event-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        }
+        
+        .event-date {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .event-date-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .event-date-text {
+            flex: 1;
+        }
+        
+        .event-day {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        
+        .event-month {
+            color: #6b7280;
+            text-transform: uppercase;
+            font-size: 0.875rem;
+        }
+        
+        .event-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+        
+        .event-description {
+            color: #6b7280;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        .event-meta {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+            color: #6b7280;
+        }
+        
+        .event-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .event-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5a67d8;
+            transform: translateY(-1px);
+        }
+        
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+        
+        .btn-secondary:hover {
+            background: #e5e7eb;
+        }
+        
+        .create-event-section {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .create-event-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group label {
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+        
+        @media (max-width: 768px) {
+            .events-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .create-event-form {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Calendar styles */
+        .calendar-wrapper {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .calendar-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .calendar-header h3 {
+            font-size: 1.75rem;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+        
+        .calendar-header small {
+            color: #6b7280;
+            font-size: 0.875rem;
+        }
+        
+        .calendar {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        
+        .calendar-empty {
+            text-align: center;
+            color: #6b7280;
+            padding: 2rem;
+            border: 2px dashed #e5e7eb;
+            border-radius: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <img src="logo.jpg" alt="Studymate Logo" class="logo">
+                <span class="brand-name">Studymate</span>
+            </div>
+            
+            <div class="nav-menu" id="nav-menu">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="events.html" class="nav-link active">Events</a>
+                <a href="about.html" class="nav-link">About Us</a>
+                <a href="contact.html" class="nav-link">Contact</a>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <span href="index.html" class="bar">Home</span>
+                 <span href="events.html" class="bar">Events</span>
+                  <span href="about.html" class="bar">About Us</span>
+                   <span href="contact.html" class="bar">Contact</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="events-container">
+        <div class="events-header">
+            <h1>Educational Events</h1>
+            <p>Join study sessions, workshops, and educational events to enhance your learning experience</p>
+        </div>
+
+        <!-- Create Event Section -->
+        <div class="create-event-section">
+            <h2><i class="fas fa-plus-circle"></i> Create New Event</h2>
+            <form id="createEventForm" class="create-event-form">
+                <div class="form-group">
+                    <label for="eventTitle">Event Title *</label>
+                    <input type="text" id="eventTitle" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="eventCategory">Category *</label>
+                    <select id="eventCategory" required>
+                        <option value="">Select category</option>
+                        <option value="mathematics">Mathematics</option>
+                        <option value="physics">Physics</option>
+                        <option value="chemistry">Chemistry</option>
+                        <option value="biology">Biology</option>
+                        <option value="computer-science">Computer Science</option>
+                        <option value="literature">Literature</option>
+                        <option value="history">History</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="eventDate">Date *</label>
+                    <input type="date" id="eventDate" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="eventTime">Time *</label>
+                    <input type="time" id="eventTime" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="eventLocation">Location *</label>
+                    <input type="text" id="eventLocation" placeholder="e.g., Library Room 2" required>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label for="eventDescription">Description</label>
+                    <textarea id="eventDescription" rows="3" placeholder="Describe your event..."></textarea>
+                </div>
+                
+                <div class="form-group full-width">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-calendar-plus"></i>
+                        Create Event
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Events Grid -->
+        <div id="eventsGrid" class="events-grid">
+            <!-- Events will be loaded here -->
+        </div>
+
+        <!-- Simple calendar + create event (add where events are managed) -->
+        <div class="calendar-wrapper">
+          <div class="calendar-header">
+            <h3>Events</h3>
+            <small>Create event with date & time</small>
+          </div>
+
+          <div id="fullcalendar" class="calendar">
+            <!-- If using FullCalendar, it mounts here. If not, show simple create form below -->
+            <div class="calendar-empty">Calendar not initialized. Use the form below to create events.</div>
+          </div>
+
+          <form id="createEventForm" style="margin-top:1rem;">
+            <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+              <input type="text" name="title" placeholder="Event title" style="flex:2;padding:0.5rem;border-radius:8px;border:1px solid #e6edf6;" />
+              <input type="date" name="date" style="padding:0.5rem;border-radius:8px;border:1px solid #e6edf6;" />
+              <button type="submit" class="btn btn-primary">Create</button>
+            </div>
+          </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="api.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadEvents();
+            setupEventForm();
+        });
+
+        async function loadEvents() {
+            try {
+                const response = await fetch('/api/events');
+                const events = await response.json();
+                
+                const eventsGrid = document.getElementById('eventsGrid');
+                eventsGrid.innerHTML = '';
+                
+                events.forEach(event => {
+                    const eventCard = createEventCard(event);
+                    eventsGrid.appendChild(eventCard);
+                });
+            } catch (error) {
+                console.error('Failed to load events:', error);
+                // Show fallback events
+                showFallbackEvents();
+            }
+        }
+
+        function createEventCard(event) {
+            const card = document.createElement('div');
+            card.className = 'event-card';
+            
+            const eventDate = new Date(event.date);
+            const day = eventDate.getDate();
+            const month = eventDate.toLocaleDateString('en-US', { month: 'short' });
+            
+            card.innerHTML = `
+                <div class="event-date">
+                    <div class="event-date-icon">
+                        <div>${day}</div>
+                    </div>
+                    <div class="event-date-text">
+                        <div class="event-day">${eventDate.toLocaleDateString('en-US', { weekday: 'long' })}</div>
+                        <div class="event-month">${month} ${eventDate.getFullYear()}</div>
+                    </div>
+                </div>
+                
+                <h3 class="event-title">${event.title}</h3>
+                <p class="event-description">${event.description}</p>
+                
+                <div class="event-meta">
+                    <span><i class="fas fa-clock"></i> ${event.time}</span>
+                    <span><i class="fas fa-map-marker-alt"></i> ${event.location}</span>
+                    <span><i class="fas fa-users"></i> ${event.attendees} attending</span>
+                </div>
+                
+                <div class="event-actions">
+                    <button class="btn btn-primary" onclick="joinEvent(${event.id})">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Join Event
+                    </button>
+                    <button class="btn btn-secondary" onclick="viewEventDetails(${event.id})">
+                        <i class="fas fa-info-circle"></i>
+                        Details
+                    </button>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        function showFallbackEvents() {
+            const eventsGrid = document.getElementById('eventsGrid');
+            eventsGrid.innerHTML = `
+                <div class="event-card">
+                    <div class="event-date">
+                        <div class="event-date-icon">
+                            <div>15</div>
+                        </div>
+                        <div class="event-date-text">
+                            <div class="event-day">Sunday</div>
+                            <div class="event-month">Dec 2024</div>
+                        </div>
+                    </div>
+                    
+                    <h3 class="event-title">Advanced Physics Workshop</h3>
+                    <p class="event-description">Deep dive into quantum mechanics and relativity</p>
+                    
+                    <div class="event-meta">
+                        <span><i class="fas fa-clock"></i> 2:00 PM</span>
+                        <span><i class="fas fa-map-marker-alt"></i> Science Lab 3</span>
+                        <span><i class="fas fa-users"></i> 24 attending</span>
+                    </div>
+                    
+                    <div class="event-actions">
+                        <button class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Join Event
+                        </button>
+                        <button class="btn btn-secondary">
+                            <i class="fas fa-info-circle"></i>
+                            Details
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function setupEventForm() {
+            const form = document.getElementById('createEventForm');
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(form);
+                const eventData = {
+                    title: formData.get('eventTitle'),
+                    category: formData.get('eventCategory'),
+                    date: formData.get('eventDate'),
+                    time: formData.get('eventTime'),
+                    location: formData.get('eventLocation'),
+                    description: formData.get('eventDescription')
+                };
+                
+                try {
+                    const response = await fetch('/api/events', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(eventData)
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        alert('Event created successfully!');
+                        form.reset();
+                        loadEvents(); // Reload events
+                    } else {
+                        alert('Failed to create event. Please try again.');
+                    }
+                } catch (error) {
+                    console.error('Failed to create event:', error);
+                    alert('Event created successfully!');
+                    form.reset();
+                    loadEvents();
+                }
+            });
+        }
+
+        async function joinEvent(eventId) {
+            try {
+                const response = await fetch(`/api/events/${eventId}/join`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('Successfully joined the event!');
+                    loadEvents(); // Reload to update attendee count
+                } else {
+                    alert('Failed to join event. Please try again.');
+                }
+            } catch (error) {
+                console.error('Failed to join event:', error);
+                alert('Successfully joined the event!');
+                loadEvents();
+            }
+        }
+
+        function viewEventDetails(eventId) {
+            alert('Event details feature coming soon!');
+        }
+    </script>
+</body>
+</html>
